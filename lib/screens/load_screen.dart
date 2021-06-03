@@ -21,7 +21,23 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
 
+    getHistoricalData();
     getLocationData();
+  }
+
+  void getHistoricalData() async {
+    Location location = Location();
+    await location.getLocation(); // can only await methods that rtn Futures
+    latitude = location.latitude;
+    longitude = location.longitude;
+
+    var start = 1622567243; // https://www.unixtimestamp.com/
+
+    NetworkHelper networkHelper = NetworkHelper(
+        'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=$latitude&lon=$longitude&dt=$start&appid=$apiKey');
+
+    var historicalWeatherData = await networkHelper.getData();
+    print('historical data: $historicalWeatherData');
   }
 
   void getLocationData() async {
@@ -33,10 +49,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
     NetworkHelper networkHelper = NetworkHelper(
         'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');
 
-    var weatherData = await networkHelper.getData();
+    var currentWeatherData = await networkHelper.getData();
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return LocationScreen(weatherData);
+      return LocationScreen(currentWeatherData);
     }));
   }
 
