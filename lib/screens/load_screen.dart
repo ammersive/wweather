@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wweather/services/location.dart';
+import 'package:wweather/services/networking.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,34 +20,28 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
 
-    getLocation();
+    getLocationData();
   }
 
-  void getLocation() async {
+  void getLocationData() async {
     Location location = Location();
     await location.getLocation(); // can only await methods that rtn Futures
     latitude = location.latitude;
     longitude = location.longitude;
-  }
 
-  void getData() async {
-    http.Response response = await http.get(
+    NetworkHelper networkHelper = NetworkHelper(
         'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');
 
-    if (response.statusCode == 200) {
-      String data = response.body;
-      var decodedData = convert.jsonDecode(data);
-      var description = decodedData['weather'][0]['description'];
+    var weatherData = await networkHelper.getData();
 
-      print('The weather is $description');
-    } else {
-      print('failed with ${response.statusCode}');
-    }
+    // to move
+    var description = weatherData['weather'][0]['description'];
+    var city = weatherData['name'];
+    print('The weather in $city is $description');
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
     return Scaffold(
         // body: Center(
         //   child: RaisedButton(
