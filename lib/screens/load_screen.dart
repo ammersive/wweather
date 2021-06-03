@@ -3,7 +3,6 @@ import 'package:wweather/services/location.dart';
 import 'package:wweather/services/networking.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import 'location_screen.dart';
 
 String apiKey = env['OPENWEATHER_API'];
@@ -21,38 +20,27 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
 
-    getHistoricalData();
-    getLocationData();
+    getWeatherData();
   }
 
-  void getHistoricalData() async {
+  void getWeatherData() async {
     Location location = Location();
-    await location.getLocation(); // can only await methods that rtn Futures
+    await location.getLocation();
     latitude = location.latitude;
     longitude = location.longitude;
+    var unixYesterday = ((DateTime.now().millisecondsSinceEpoch / 1000) - 86400)
+        .round(); // also https://www.unixtimestamp.com/
 
-    var start = 1622567243; // https://www.unixtimestamp.com/
-
-    NetworkHelper networkHelper = NetworkHelper(
-        'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=$latitude&lon=$longitude&dt=$start&appid=$apiKey');
-
-    var historicalWeatherData = await networkHelper.getData();
-    print('historical data: $historicalWeatherData');
-  }
-
-  void getLocationData() async {
-    Location location = Location();
-    await location.getLocation(); // can only await methods that rtn Futures
-    latitude = location.latitude;
-    longitude = location.longitude;
-
-    NetworkHelper networkHelper = NetworkHelper(
+    NetworkHelper networkHelperCurrent = NetworkHelper(
         'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');
+    NetworkHelper networkHelperHistorical = NetworkHelper(
+        'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=$latitude&lon=$longitude&dt=$unixYesterday&appid=$apiKey');
 
-    var currentWeatherData = await networkHelper.getData();
+    var currentWeatherData = await networkHelperCurrent.getData();
+    var historicalWeatherData = await networkHelperHistorical.getData();
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return LocationScreen(currentWeatherData);
+      return LocationScreen(currentWeatherData, historicalWeatherData);
     }));
   }
 

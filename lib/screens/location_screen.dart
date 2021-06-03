@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 class LocationScreen extends StatelessWidget {
-  LocationScreen(this.locationData);
+  LocationScreen(this.locationData, this.historicalData);
 
   final locationData;
+  final historicalData;
 
   @override
   Widget build(BuildContext context) {
     String description = locationData['weather'][0]['description'];
     String city = locationData['name'];
+
+    print('historical data: $historicalData');
 
     return Scaffold(
       body: Container(
