@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:wweather/services/location.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+String apiKey = env['OPENWEATHER_API'];
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -9,6 +12,9 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  double latitude;
+  double longitude;
+
   @override
   void initState() {
     super.initState();
@@ -19,27 +25,23 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void getLocation() async {
     Location location = Location();
     await location.getLocation(); // can only await methods that rtn Futures
-    print(location.latitude);
-    print(location.longitude);
+    latitude = location.latitude;
+    longitude = location.longitude;
   }
 
   void getData() async {
-    // This example uses the Google Books API to search for books about http.
-    // https://developers.google.com/books/docs/overview
-    var url =
-        Uri.https('www.googleapis.com', '/books/v1/volumes', {'q': '{cats}'});
+    http.Response response = await http.get(
+        'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');
 
-    // Await the http get response, then decode the json-formatted response.
-    var response = await http.get(url);
     if (response.statusCode == 200) {
-      var jsonResponse =
-          convert.jsonDecode(response.body) as Map<String, dynamic>;
-      var itemCount = jsonResponse['totalItems'];
-      print('Number of books about cats: $itemCount.');
+      String data = response.body;
+      var decodedData = convert.jsonDecode(data);
+      var description = decodedData['weather'][0]['description'];
+
+      print('The weather is $description');
     } else {
-      print('Request failed with status: ${response.statusCode}.');
+      print('failed with ${response.statusCode}');
     }
-    print(response.body);
   }
 
   @override
