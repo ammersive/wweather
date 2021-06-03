@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:wweather/services/location.dart';
 import 'package:wweather/services/networking.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import 'location_screen.dart';
 
 String apiKey = env['OPENWEATHER_API'];
 
@@ -34,24 +35,20 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
     var weatherData = await networkHelper.getData();
 
-    // to move
-    var description = weatherData['weather'][0]['description'];
-    var city = weatherData['name'];
-    print('The weather in $city is $description');
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return LocationScreen(weatherData);
+    }));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // body: Center(
-        //   child: RaisedButton(
-        //     onPressed: () {
-        //       //Get the current location
-        //       getLocation();
-        //     },
-        //     child: Text('Get Location'),
-        //   ),
-        // ),
-        );
+        backgroundColor: Colors.cyan,
+        body: Center(
+          child: SpinKitWave(
+            color: Colors.white,
+            size: 100.0,
+          ),
+        ));
   }
 }
