@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LocationScreen extends StatelessWidget {
   LocationScreen(this.locationData, this.historicalData);
@@ -11,7 +12,8 @@ class LocationScreen extends StatelessWidget {
     String description = locationData['weather'][0]['description'];
     String city = locationData['name'];
 
-    print('historical data: $historicalData');
+    print('current data: $locationData');
+    // print('historical data: $historicalData');
 
     return Scaffold(
       body: Container(

@@ -1,3 +1,5 @@
+// import 'dart:html';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,3 +22,10 @@ class NetworkHelper {
     }
   }
 }
+
+// class UrlBuilder {
+//   UrlBuilder({this.lattitude, this.longitude, this.apiKey})
+// }
+//
+// NetworkHelper networkHelperCurrent = NetworkHelper(
+//     'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');

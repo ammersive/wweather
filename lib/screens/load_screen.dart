@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:wweather/services/location.dart';
-import 'package:wweather/services/networking.dart';
+import 'package:provider/provider.dart';
+import 'package:wweather/models/weather.dart';
+import 'package:wweather/models/location.dart';
+import 'package:wweather/services/current_location.dart';
+import 'package:wweather/services/network_helper.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'location_screen.dart';
@@ -24,7 +27,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   void getWeatherData() async {
-    Location location = Location();
+    List<Location> faveLocations =
+        Provider.of<Weather>(context, listen: false).faveLocations;
+    // Weather.faveLocations;
+    print(faveLocations[0].longitude);
+
+    CurrentLocation location = CurrentLocation();
     await location.getLocation();
     latitude = location.latitude;
     longitude = location.longitude;
