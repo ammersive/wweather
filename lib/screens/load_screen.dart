@@ -39,12 +39,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
     currentCalls.forEach((call) async {
       currentResponses.add(await call.getData());
     });
-    currentResponses.sort((a, b) {
-      return a.value['name']
-          .toString()
-          .toLowerCase()
-          .compareTo(b.value['name'].toString().toLowerCase());
-    });
     Provider.of<Weather>(context).addLocationData(currentResponses);
 
     List<NetworkHelper> historicCalls = [];
@@ -58,15 +52,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
     });
 
     Provider.of<Weather>(context).addLocationData(historicResponses);
-
-    // List<NetworkHelper> histCalls = [];
-    // faveLocations.forEach((location) {
-    //   histCalls.add(NetworkHelper(
-    //       'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=${location.latitude}&lon=${location.longitude}&dt=$unixYesterday&appid=$apiKey'));
-    // });
-    // histCalls.forEach((call) async {
-    //   Provider.of<Weather>(context).addLocationData(await call.getData());
-    // });
 
     NetworkHelper networkHelperCurrent = NetworkHelper(
         'https://api.openweathermap.org/data/2.5/weather?lat=$currentLatitude&lon=$currentLongitude&appid=$apiKey');

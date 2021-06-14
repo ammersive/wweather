@@ -11,17 +11,23 @@ class Weather extends ChangeNotifier {
   List locationData = []; // TODO, currently unordered, store data better
 
   void addLocationData(locationDataResponse) {
+    // var sorted = locationDataResponse.sort((a, b) {
+    //   return a['name']
+    //       .toString()
+    //       .toLowerCase()
+    //       .compareTo(b['name'].toString().toLowerCase());
+    // });
+    //
+    // locationData.add(sorted);
     locationData.add(locationDataResponse);
   }
-  // var sorted = locationDataResponse.sort((a, b) {
-  //   return a.value['name']
-  //       .toString()
-  //       .toLowerCase()
-  //       .compareTo(b.value['name'].toString().toLowerCase());
-  // });
-  // locationData.add(locationDataResponse.sort((a, b) =>
-  //      a.value['name']
-  //         .toString()
-  //         .toLowerCase()
-  //         .compareTo(b.value['name'].toString().toLowerCase())));
+
+  sortLocationData() {
+    locationData.forEach((elem) => elem.sort((a, b) {
+          return a['name']
+              .toString()
+              .toLowerCase()
+              .compareTo(b['name'].toString().toLowerCase());
+        }));
+  }
 }
