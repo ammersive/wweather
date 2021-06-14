@@ -13,7 +13,10 @@ class LocationScreen extends StatelessWidget {
     String description = locationData['weather'][0]['description'];
     String city = locationData['name'];
 
-    print(Provider.of<Weather>(context, listen: false).locationData);
+    print(
+        "CURRENT ${Provider.of<Weather>(context, listen: false).locationData[0][0]["name"]}");
+    print(
+        "HSTORCC ${Provider.of<Weather>(context, listen: false).locationData[1][0]["name"]}");
     // print('current data: $locationData');
     // print('historical data: $historicalData');
 

@@ -8,9 +8,20 @@ class Weather extends ChangeNotifier {
     Location(51.672440, -2.683341), // Wyndcliffe
   ];
 
-  List locationData = [];
+  List locationData = []; // TODO, currently unordered, store data better
 
   void addLocationData(locationDataResponse) {
     locationData.add(locationDataResponse);
   }
+  // var sorted = locationDataResponse.sort((a, b) {
+  //   return a.value['name']
+  //       .toString()
+  //       .toLowerCase()
+  //       .compareTo(b.value['name'].toString().toLowerCase());
+  // });
+  // locationData.add(locationDataResponse.sort((a, b) =>
+  //      a.value['name']
+  //         .toString()
+  //         .toLowerCase()
+  //         .compareTo(b.value['name'].toString().toLowerCase())));
 }

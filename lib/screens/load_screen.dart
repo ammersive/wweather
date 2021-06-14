@@ -31,13 +31,33 @@ class _LoadingScreenState extends State<LoadingScreen> {
         Provider.of<Weather>(context, listen: false).faveLocations;
 
     List<NetworkHelper> currentCalls = [];
+    List currentResponses = [];
     faveLocations.forEach((location) {
       currentCalls.add(NetworkHelper(
           'https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey'));
     });
     currentCalls.forEach((call) async {
-      Provider.of<Weather>(context).addLocationData(await call.getData());
+      currentResponses.add(await call.getData());
     });
+    currentResponses.sort((a, b) {
+      return a.value['name']
+          .toString()
+          .toLowerCase()
+          .compareTo(b.value['name'].toString().toLowerCase());
+    });
+    Provider.of<Weather>(context).addLocationData(currentResponses);
+
+    List<NetworkHelper> historicCalls = [];
+    List historicResponses = [];
+    faveLocations.forEach((location) {
+      historicCalls.add(NetworkHelper(
+          'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=${location.latitude}&lon=${location.longitude}&dt=$unixYesterday&appid=$apiKey'));
+    });
+    currentCalls.forEach((call) async {
+      historicResponses.add(await call.getData());
+    });
+
+    Provider.of<Weather>(context).addLocationData(historicResponses);
 
     // List<NetworkHelper> histCalls = [];
     // faveLocations.forEach((location) {
