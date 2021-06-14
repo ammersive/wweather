@@ -16,33 +16,42 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  double latitude;
-  double longitude;
+  bool isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-
-    getWeatherData();
-  }
-
+  // @override
   void getWeatherData() async {
-    List<Location> faveLocations =
-        Provider.of<Weather>(context, listen: false).faveLocations;
-    // Weather.faveLocations;
-    print(faveLocations[0].longitude);
-
-    CurrentLocation location = CurrentLocation();
-    await location.getLocation();
-    latitude = location.latitude;
-    longitude = location.longitude;
-    var unixYesterday = ((DateTime.now().millisecondsSinceEpoch / 1000) - 86400)
+    CurrentLocation currentLocation = CurrentLocation();
+    await currentLocation.getLocation();
+    double currentLatitude = currentLocation.latitude;
+    double currentLongitude = currentLocation.longitude;
+    int unixYesterday = ((DateTime.now().millisecondsSinceEpoch / 1000) - 86400)
         .round(); // also https://www.unixtimestamp.com/
 
+    List<Location> faveLocations =
+        Provider.of<Weather>(context, listen: false).faveLocations;
+
+    List<NetworkHelper> currentCalls = [];
+    faveLocations.forEach((location) {
+      currentCalls.add(NetworkHelper(
+          'https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey'));
+    });
+    currentCalls.forEach((call) async {
+      Provider.of<Weather>(context).addLocationData(await call.getData());
+    });
+
+    // List<NetworkHelper> histCalls = [];
+    // faveLocations.forEach((location) {
+    //   histCalls.add(NetworkHelper(
+    //       'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=${location.latitude}&lon=${location.longitude}&dt=$unixYesterday&appid=$apiKey'));
+    // });
+    // histCalls.forEach((call) async {
+    //   Provider.of<Weather>(context).addLocationData(await call.getData());
+    // });
+
     NetworkHelper networkHelperCurrent = NetworkHelper(
-        'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');
+        'https://api.openweathermap.org/data/2.5/weather?lat=$currentLatitude&lon=$currentLongitude&appid=$apiKey');
     NetworkHelper networkHelperHistorical = NetworkHelper(
-        'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=$latitude&lon=$longitude&dt=$unixYesterday&appid=$apiKey');
+        'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=$currentLatitude&lon=$currentLongitude&dt=$unixYesterday&appid=$apiKey');
 
     var currentWeatherData = await networkHelperCurrent.getData();
     var historicalWeatherData = await networkHelperHistorical.getData();
@@ -57,10 +66,21 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return Scaffold(
         backgroundColor: Colors.cyan,
         body: Center(
-          child: SpinKitWave(
-            color: Colors.white,
-            size: 100.0,
-          ),
-        ));
+            child: isLoading
+                ? SpinKitWave(
+                    color: Colors.white,
+                    size: 100.0,
+                  )
+                : FlatButton(
+                    child: Text("Get weather data",
+                        style: TextStyle(color: Colors.cyan)),
+                    color: Colors.white,
+                    onPressed: () {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      getWeatherData();
+                    },
+                  )));
   }
 }

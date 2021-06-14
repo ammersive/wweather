@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wweather/models/weather.dart';
 
 class LocationScreen extends StatelessWidget {
   LocationScreen(this.locationData, this.historicalData);
@@ -12,7 +13,8 @@ class LocationScreen extends StatelessWidget {
     String description = locationData['weather'][0]['description'];
     String city = locationData['name'];
 
-    print('current data: $locationData');
+    print(Provider.of<Weather>(context, listen: false).locationData);
+    // print('current data: $locationData');
     // print('historical data: $historicalData');
 
     return Scaffold(

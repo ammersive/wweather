@@ -8,8 +8,9 @@ class Weather extends ChangeNotifier {
     Location(51.672440, -2.683341), // Wyndcliffe
   ];
 
-  // List<Location> get faveLocations {
-  //   return _fave_locations;
-  // }
+  List locationData = [];
 
+  void addLocationData(locationDataResponse) {
+    locationData.add(locationDataResponse);
+  }
 }
